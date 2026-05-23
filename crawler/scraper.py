@@ -57,6 +57,7 @@ def scrape_url(start_url: str, crawl_id: int):
             db.commit()
             
             # 2. Tìm các phần tử Clickable (Tab, Category, Xem thêm)
+            # 
             js_script = """
             () => {
                 const selectors = [];
