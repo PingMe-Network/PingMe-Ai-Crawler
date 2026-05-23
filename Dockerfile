@@ -8,7 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Đảm bảo Playwright đã cài đặt xong trình duyệt Chromium
-RUN playwright install chromium
+RUN python -m playwright install chromium
 
 # Copy toàn bộ mã nguồn vào Container
 COPY . .

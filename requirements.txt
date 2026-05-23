@@ -6,3 +6,5 @@ psycopg2-binary>=2.9.9
 pgvector>=0.2.5
 numpy>=1.26.0
 tiktoken>=0.7.0
+playwright>=1.43.0
+beautifulsoup4>=4.12.0
