@@ -8,3 +8,4 @@ numpy>=1.26.0
 tiktoken>=0.7.0
 playwright>=1.43.0
 beautifulsoup4>=4.12.0
+gunicorn>=21.2.0

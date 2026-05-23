@@ -16,5 +16,5 @@ COPY . .
 # Mở cổng 8000
 EXPOSE 8000
 
-# Chạy server
-CMD ["python", "main.py"]
+# Chạy server bằng Gunicorn (Chuẩn Production)
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:8000", "main:app"]
