@@ -7,7 +7,7 @@ on:
     branches: [ "main", "master" ]
 
 env:
-  IMAGE_NAME: huynhducphu/ai-crawler
+  IMAGE_NAME: HuynhDucPhu2502/ai-crawler
 
 jobs:
   build-and-push-image:
