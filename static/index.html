@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Crawler & Widget Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 10px 0;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            color: #a5b4fc;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .widget-preview {
+            background: white;
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .widget-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+            color: #0f172a;
+        }
+        
+        .widget-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .widget-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 15px;
+        }
+
+        .widget-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .item-name { font-weight: 600; font-size: 1.05rem; }
+        .item-price { color: #10b981; font-weight: 700; font-size: 1.1rem; }
+
+        .item-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .item-img-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>AI Crawler Studio</h1>
+            <p>Trích xuất dữ liệu thông minh và tổng hợp Widget tự động</p>
+        </div>
+
+        <!-- BƯỚC 1: CÀO DỮ LIỆU -->
+        <div class="glass-card" id="step1-card">
+            <div class="form-group">
+                <label for="urlInput">1. Nhập URL trang web cần cào:</label>
+                <input type="text" id="urlInput" placeholder="Ví dụ: https://www.tea4life.click/shop">
+            </div>
+            <button id="crawlBtn" onclick="startCrawl()">
+                <span class="btn-text">Bắt đầu Cào Dữ Liệu</span>
+                <div class="loader" id="crawlLoader"></div>
+            </button>
+            <div id="crawlError" style="color: #ef4444; margin-top: 10px; font-size: 0.9rem;"></div>
+        </div>
+
+        <!-- BƯỚC 2: PHÒNG CHAT & TẠO WIDGET -->
+        <div class="glass-card hidden" id="step2-card">
+            <div class="badge" id="roomBadge">Room ID: 123</div>
+            
+            <div class="form-group">
+                <label for="queryInput">2. Ra lệnh cho AI tạo Widget:</label>
+                <input type="text" id="queryInput" placeholder="Ví dụ: Trích xuất danh sách trà sữa có giá dưới 40000...">
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button id="chatBtn" onclick="askAI()" disabled>
+                    <span class="btn-text">AI Tổng Hợp Widget</span>
+                    <div class="loader" id="chatLoader"></div>
+                </button>
+                <button id="recrawlBtn" onclick="reCrawl()" style="background: #3b82f6; max-width: 150px;" disabled>
+                    <span class="btn-text">Cào Lại Web</span>
+                    <div class="loader" id="recrawlLoader"></div>
+                </button>
+            </div>
+            <div id="chatError" style="color: #ef4444; margin-top: 10px; font-size: 0.9rem;"></div>
+        </div>
+
+        <!-- BƯỚC 3: KẾT QUẢ WIDGET -->
+        <div class="glass-card hidden" id="result-card">
+            <label>Mã JSON thô (Lưu vào Database của bạn):</label>
+            <pre id="jsonResult">{}</pre>
+
+            <label style="margin-top: 20px;">Bản xem trước Widget (Frontend của bạn):</label>
+            <div class="widget-preview" id="widgetPreview">
+                <!-- Nội dung render bằng JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentRoomId = null;
+
+        async function startCrawl() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) return alert('Vui lòng nhập URL');
+
+            const btn = document.getElementById('crawlBtn');
+            const loader = document.getElementById('crawlLoader');
+            const errDiv = document.getElementById('crawlError');
+            
+            btn.disabled = true;
+            loader.style.display = 'block';
+            errDiv.innerText = '';
+
+            try {
+                const res = await fetch('/api/rooms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    currentRoomId = data.room_id;
+                    document.getElementById('step1-card').style.opacity = '0.5';
+                    document.getElementById('urlInput').disabled = true;
+                    btn.style.display = 'none';
+
+                    const step2 = document.getElementById('step2-card');
+                    step2.classList.remove('hidden');
+                    step2.classList.add('fade-in');
+                    document.getElementById('roomBadge').innerText = `Room ID: ${currentRoomId} | Đang khởi động Spider...`;
+                    
+                    // Bắt đầu vòng lặp kiểm tra tiến độ
+                    checkCrawlStatus(currentRoomId);
+                } else {
+                    errDiv.innerText = 'Lỗi: ' + data.error;
+                    btn.disabled = false;
+                    loader.style.display = 'none';
+                }
+            } catch (error) {
+                errDiv.innerText = 'Lỗi kết nối Server: ' + error.message;
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function checkCrawlStatus(roomId) {
+            try {
+                const res = await fetch(`/api/rooms/${roomId}/status`);
+                const data = await res.json();
+                
+                if (data.status === 'crawling') {
+                    const percent = Math.floor((data.pages_crawled / data.total_pages) * 100);
+                    document.getElementById('roomBadge').innerText = `Room ID: ${roomId} | Đang cào Spider: ${data.pages_crawled}/${data.total_pages} trang (${percent}%)`;
+                    setTimeout(() => checkCrawlStatus(roomId), 2000); // Lặp lại sau 2s
+                } else if (data.status === 'success') {
+                    document.getElementById('roomBadge').innerText = `Room ID: ${roomId} | Trạng thái: Cào xong toàn bộ!`;
+                    document.getElementById('roomBadge').style.background = 'rgba(16, 185, 129, 0.4)';
+                    document.getElementById('chatBtn').disabled = false;
+                    document.getElementById('recrawlBtn').disabled = false;
+                } else {
+                    document.getElementById('roomBadge').innerText = `Room ID: ${roomId} | Trạng thái: Lỗi`;
+                    document.getElementById('roomBadge').style.background = 'rgba(239, 68, 68, 0.4)';
+                }
+            } catch (e) {
+                setTimeout(() => checkCrawlStatus(roomId), 2000); // Cố thử lại nếu mạng lag
+            }
+        }
+
+        async function askAI() {
+            const query = document.getElementById('queryInput').value;
+            if (!query) return alert('Vui lòng nhập yêu cầu cho AI');
+
+            const btn = document.getElementById('chatBtn');
+            const loader = document.getElementById('chatLoader');
+            const errDiv = document.getElementById('chatError');
+            const resultCard = document.getElementById('result-card');
+            
+            btn.disabled = true;
+            loader.style.display = 'block';
+            errDiv.innerText = '';
+            resultCard.classList.add('hidden');
+
+            try {
+                const res = await fetch(`/api/rooms/${currentRoomId}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    resultCard.classList.remove('hidden');
+                    resultCard.classList.add('fade-in');
+                    
+                    // Hiển thị JSON
+                    document.getElementById('jsonResult').innerText = JSON.stringify(data.widget, null, 2);
+                    
+                    // Render giao diện Widget ảo
+                    renderWidgetPreview(data.widget);
+                } else {
+                    errDiv.innerText = 'Lỗi: ' + data.error;
+                }
+            } catch (error) {
+                errDiv.innerText = 'Lỗi kết nối Server: ' + error.message;
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function reCrawl() {
+            const btn = document.getElementById('recrawlBtn');
+            const loader = document.getElementById('recrawlLoader');
+            document.getElementById('chatBtn').disabled = true;
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                const res = await fetch(`/api/rooms/${currentRoomId}/recrawl`, { method: 'POST' });
+                if (res.ok) {
+                    document.getElementById('roomBadge').innerText = `Room ID: ${currentRoomId} | Đang cào lại...`;
+                    checkCrawlStatus(currentRoomId);
+                }
+            } catch (error) {
+                alert('Lỗi khi cào lại: ' + error.message);
+                btn.disabled = false;
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        function renderWidgetPreview(widgetData) {
+            const container = document.getElementById('widgetPreview');
+            let html = '';
+            
+            if (widgetData.title) html += `<h3 class="widget-title">${widgetData.title}</h3>`;
+            if (widgetData.description) html += `<div class="widget-desc">${widgetData.description}</div>`;
+            
+            // Xử lý các dạng mảng sản phẩm (sửa để AI có thể đặt tên mảng là products hoặc items)
+            const list = widgetData.products || widgetData.items || [];
+            
+            if (Array.isArray(list) && list.length > 0) {
+                list.forEach(item => {
+                    const name = item.name || item.title || 'Không rõ tên';
+                    
+                    let priceDisplay = 'Liên hệ';
+                    if (item.price) {
+                        // Nếu AI đã định dạng sẵn (có chữ đ, dấu chấm) thì dùng luôn
+                        if (isNaN(Number(item.price))) {
+                            priceDisplay = item.price;
+                        } else {
+                            // Nếu AI trả về số nguyên (30000) thì tự format
+                            priceDisplay = Number(item.price).toLocaleString('vi-VN') + ' ₫';
+                        }
+                    }
+
+                    const imgHtml = item.image_url 
+                        ? `<img src="${item.image_url}" class="item-img" alt="${name}" onerror="this.outerHTML='<div class=\\'item-img-placeholder\\'>Lỗi ảnh</div>'">` 
+                        : `<div class="item-img-placeholder">Không có ảnh</div>`;
+                    
+                    html += `
+                    <div class="widget-item">
+                        ${imgHtml}
+                        <div class="item-info">
+                            <span class="item-name">${name}</span>
+                            <span class="item-price">${priceDisplay}</span>
+                        </div>
+                    </div>`;
+                });
+            } else {
+                html += '<i>Không tìm thấy danh sách sản phẩm nào khớp với yêu cầu.</i>';
+            }
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
